@@ -5,6 +5,11 @@ import { AppState,
 import AppStateListener from 'react-native-appstate-listener';
 import Row from "./row";
 import Button from "./button";
+import SoundPlayer from 'react-native-sound-player';
+
+
+//var Sound = require('react-native-sound');
+//var clickSound = null;
 
 class App extends Component {
   constructor(props) {
@@ -88,7 +93,17 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    SoundPlayer.onFinishedPlaying((success: boolean) => { // success is true when the sound is played 
+      console.log('finished playing', success);
+    });
+  }
+
   componentWillMount() {
+    
+    // unsubscribe when unmount 
+    SoundPlayer.unmount();
+
     AsyncStorage.getItem("items").then((json) => {
       try {
         const items = JSON.parse(json);
@@ -116,6 +131,16 @@ class App extends Component {
        counter: counterNewVal
     });
     this.handleAddItem();
+    try {
+      SoundPlayer.playSoundFile('clickgood', 'wav');
+    } catch (e) {
+      console.log(`cannot play the sound file`, e);
+    }
+    // clickSound.play((success) => {
+    //   if (!success) {
+    //     console.log('Sound did not play')
+    //   }
+    // });
   }
   handleFilter(filter) {
     this.setSource(this.state.items, filterItems(filter, this.state.items), { filter })
@@ -123,8 +148,6 @@ class App extends Component {
   handleUpdateText(key, text) {
     const newItems = this.state.items.map((item) => {
       if (item.key !== key) return item;
-      console.log(item)
-      console.log(text)
       return {
         ... item,
         text
@@ -180,7 +203,6 @@ class App extends Component {
     ]
     // setting what items in todo list should be displayed accourding to chosen filter
     this.setSource(newItems, newItems, { value: "" })
-    console.log("item added!");
     // this.setState({
     //   items: newItems,
     //   value: ""
