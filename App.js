@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
-import {
+import React, { Component,  } from 'react';
+import { AppState,
   StyleSheet, Text, View, Platform, ListView, Keyboard, AsyncStorage, ActivityIndicator, TouchableOpacity
 } from 'react-native';
-import Row from "./row"
-import Button from "./button"
+import AppStateListener from 'react-native-appstate-listener';
+import Row from "./row";
+import Button from "./button";
 
 class App extends Component {
   constructor(props) {
@@ -15,37 +16,39 @@ class App extends Component {
       value: "",
       items: [],
       dataSource: ds.cloneWithRows([]),
-      counter: 0
+      counter: 0,
+      flexValOfButtonView: 1,
     }
     this.handleUpdateText = this.handleUpdateText.bind(this);
     this.handleToggleEditing = this.handleToggleEditing.bind(this);
-    this.handleFilter = this.handleFilter.bind(this);
     this.handleRemoveItem = this.handleRemoveItem.bind(this);
-    this.handleToggleComplete = this.handleToggleComplete.bind(this);
     this.handleAddItem = this.handleAddItem.bind(this);
-    this.handleToggleAllComplete = this.handleToggleAllComplete.bind(this);
     this.setSource = this.setSource.bind(this);
 
     this.handleClearAll = this.handleClearAll.bind(this);
     this.handleIncrement = this.handleIncrement.bind(this);
   }
+  
   render() {
     return (
       <View style={styles.container}>
+        <AppStateListener onActive={()=>Keyboard.dismiss()}> </AppStateListener>
         <View style={styles.totalCount}>
           <Text style={styles.totalCountText}>{this.state.items.length} times</Text>
         </View>
-        <View style={styles.buttonView}>
+        <View style={this.buttonViewStyle()}>
           <Button
             onIncrement={this.handleIncrement}
           />
         </View>
-        <View style={styles.content}>
+        <View style={styles.content}
+          onScroll={()=>Keyboard.dismiss()}
+        >
           <ListView
             style={styles.list}
             enableEmptySections
             dataSource={this.state.dataSource}
-            onScroll={()=>Keyboard.dismiss()} /*whenever someone scrolls the list the keybord dissapears*/
+            //onScroll={()=>Keyboard.dismiss()} /*whenever someone scrolls the list the keybord dissapears*/
             renderRow={({key, ... value}) => {
               return (
                 <Row 
@@ -79,11 +82,18 @@ class App extends Component {
     );
   }
 
+  buttonViewStyle() {
+    return {
+      flex: this.state.flexValOfButtonView,
+    }
+  }
+
   componentWillMount() {
     AsyncStorage.getItem("items").then((json) => {
       try {
         const items = JSON.parse(json);
         this.setSource(items, items, { loading: false});
+        // Keyboard.dismiss();
       } catch(e) {
         this.setState({
           loading: false
@@ -113,22 +123,27 @@ class App extends Component {
   handleUpdateText(key, text) {
     const newItems = this.state.items.map((item) => {
       if (item.key !== key) return item;
+      console.log(item)
+      console.log(text)
       return {
         ... item,
         text
       }
     })
-    this.setSource(newItems, filterItems(this.state.filter, newItems));
+    
+    this.setSource(newItems, newItems);
   }
   handleToggleEditing(key, editing) {
     const newItems = this.state.items.map((item) => {
+      if (editing) this.state.flexValOfButtonView = 0.5;
+      else this.state.flexValOfButtonView = 1;
       if (item.key !== key) return item;
       return {
         ... item,
         editing
       }
     })
-    this.setSource(newItems, filterItems(this.state.filter, newItems));
+    this.setSource(newItems, newItems);
   }
   handleClearAll() {
     // make sure new items are only with active state
@@ -147,31 +162,9 @@ class App extends Component {
        counter: counterNewVal
     });
   }
-  handleToggleComplete(key, complete) {
-    const newItems = this.state.items.map((item) => {
-      if (item.key !== key) return item;
-      return {
-        ... item,
-        complete
-      }
-    })
-    this.setSource(newItems, filterItems(this.state.filter, newItems));
-  }
-  handleToggleAllComplete() {
-    const complete = !this.state.allComplete;
-    const newItems = this.state.items.map((item) => ({
-      ... item,
-      complete
-    }))
-    console.table(newItems);
-    this.setSource(newItems, filterItems(this.state.filter, newItems), {allComplete: complete})
-    // this.setState({
-    //   items: newItems,
-    //   allComplete: complete
-    // })
-  }
   handleAddItem() {
     // if(!this.state.value) return;
+    this.state.flexValOfButtonView = 1;
     var date = new Date();
     var n = date.toDateString();
     var time = date.toLocaleTimeString();
@@ -198,11 +191,11 @@ class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFEBEE'
-    // ... Platform.select({
-    //   ios: { paddingTop: 30 },
-    //   android: { paddingTop: 30 }
-    // })
+    backgroundColor: '#FFEBEE',
+    ... Platform.select({
+      ios: { paddingTop: 20 },
+      //android: { paddingTop: 30 }
+    })
   },
   content: {
     flex: 1
@@ -225,9 +218,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(0,0,0,.2)"
   },
-  buttonView: {
-    flex: 1, 
-  },
+  // buttonView: {
+  //   flex: {this.state.flexValOfButtonView}, 
+  // },
   totalCount: {
     alignItems: "center",
     justifyContent: "center",
