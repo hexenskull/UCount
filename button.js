@@ -28,16 +28,6 @@ const styles = StyleSheet.create({
     },
     bigButton: {
         flex: 1,
-        // position: "absolute",
-        // left: 0,
-        // top: 0,
-        // bottom: 0,
-        // right: 0,
-        // backgroundColor: "#E53935",
-        // margin: 10,  
-        // borderRadius: 100,
-        // borderColor: "#909090",
-        // borderWidth: 20,
     },
     bigButtonOpacity: {
         flex: 1,
