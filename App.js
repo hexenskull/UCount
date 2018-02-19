@@ -6,7 +6,6 @@ import {
   View,
   Platform,
   ListView,
-  FlatList,
   Keyboard,
   AsyncStorage,
   ActivityIndicator,
@@ -15,11 +14,7 @@ import {
 import AppStateListener from "react-native-appstate-listener";
 import Row from "./row";
 import Button from "./button";
-import SoundPlayer from "react-native-sound-player";
 import Icon from "react-native-vector-icons/Entypo";
-
-//var Sound = require('react-native-sound');
-//var clickSound = null;
 
 class App extends Component {
   backIcon = <Icon name="back" size={40} color="#900" />;
@@ -38,21 +33,18 @@ class App extends Component {
       flexValOfButtonView: 1,
       isUndoButtonActive: false
     };
-    this.handleUpdateText = this.handleUpdateText.bind(this);
-    this.handleToggleEditing = this.handleToggleEditing.bind(this);
+
     this.handleRemoveItem = this.handleRemoveItem.bind(this);
     this.handleAddItem = this.handleAddItem.bind(this);
     this.setSource = this.setSource.bind(this);
 
     this.handleClearAll = this.handleClearAll.bind(this);
     this.handleIncrement = this.handleIncrement.bind(this);
-    this.handleUndo = this.handleUndo.bind(this);
   }
 
   render() {
     return (
       <View style={styles.container}>
-        {/* <Icon name="rocket" size={30} color="#900" /> */}
         <AppStateListener onActive={() => Keyboard.dismiss()}>
           {" "}
         </AppStateListener>
@@ -93,16 +85,7 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
-    SoundPlayer.onFinishedPlaying((success: boolean) => {
-      // success is true when the sound is played
-      console.log("finished playing", success);
-    });
-  }
-
   componentWillMount() {
-    // unsubscribe when unmount
-    SoundPlayer.unmount();
 
     AsyncStorage.getItem("items").then(json => {
       try {
@@ -125,9 +108,6 @@ class App extends Component {
     });
     AsyncStorage.setItem("items", JSON.stringify(items));
   }
-  handleUndo() {
-    console.log("undo pressed");
-  }
   handleIncrement() {
     console.log(`incrementing`);
     var counterNewVal = this.state.counter + 1;
@@ -135,51 +115,10 @@ class App extends Component {
       counter: counterNewVal
     });
     this.handleAddItem();
-    try {
-      SoundPlayer.playSoundFile("clickgood", "wav");
-    } catch (e) {
-      console.log(`cannot play the sound file`, e);
-    }
-    // clickSound.play((success) => {
-    //   if (!success) {
-    //     console.log('Sound did not play')
-    //   }
-    // });
-  }
-  handleFilter(filter) {
-    this.setSource(this.state.items, filterItems(filter, this.state.items), {
-      filter
-    });
-  }
-  handleUpdateText(key, text) {
-    const newItems = this.state.items.map(item => {
-      if (item.key !== key) return item;
-      return {
-        ...item,
-        text
-      };
-    });
-
-    this.setSource(newItems, newItems);
-  }
-  handleToggleEditing(key, editing) {
-    const newItems = this.state.items.map(item => {
-      if (editing) this.state.flexValOfButtonView = 0.5;
-      else this.state.flexValOfButtonView = 1;
-      if (item.key !== key) return item;
-      return {
-        ...item,
-        editing
-      };
-    });
-    this.setSource(newItems, newItems);
   }
   handleClearAll() {
-    // make sure new items are only with active state
-    // const newItems = filterItems("ACTIVE", this.state.items);
     const newItems = [];
     this.setSource(newItems, newItems);
-    // this.setSource(newItems, filterItems(this.state.filter, newItems));
   }
   handleRemoveItem() {
     const splicedItem = this.state.items.splice(-1,1);
@@ -193,7 +132,6 @@ class App extends Component {
     });
   }
   handleAddItem() {
-    // if(!this.state.value) return;
     this.state.flexValOfButtonView = 1;
     var date = new Date();
     var n = date.toDateString();
@@ -201,43 +139,31 @@ class App extends Component {
     const newItems = [
       {
         key: Date.now(),
-        // text: this.state.value,
-        // text: Date.now().stringify,
         text: n + " " + time,
         complete: false
       },
       ...this.state.items
     ];
-    // setting what items in todo list should be displayed accourding to chosen filter
     this.setSource(newItems, newItems, { value: "" });
-    // this.setState({
-    //   items: newItems,
-    //   value: ""
-    // })
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFEBEE",
+    backgroundColor: "#FFECB3",
     ...Platform.select({
       ios: { paddingTop: 20 }
-      //android: { paddingTop: 30 }
     })
   },
   content: {
     flex: 1,
-  },
-  list: {
-    backgroundColor: '#f10'
   },
   separator: {
     borderWidth: 1,
     borderColor: "#F5F5F5"
   },
   loading: {
-    // tell the view to cover everything
     position: "absolute",
     left: 0,
     top: 0,
@@ -247,9 +173,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(0,0,0,.2)"
   },
-  // buttonView: {
-  //   flex: {this.state.flexValOfButtonView},
-  // },
   totalCount: {
     flexDirection: "row",
     alignItems: "center",
@@ -276,18 +199,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center"
-    // position: "absolute",
-    // top: 1,
-    // left: 1
-    // borderRadius: 10,
-    // flex: 1,
-    // bottom: 0,
-    // left: 0
   },
   backButton: {
-    // position: "absolute",
-    // left: 0,
-    // top: 0,
     borderRadius: 25,
     backgroundColor: "#FFFF",
     padding: 5,
