@@ -1,4 +1,4 @@
-package com.parrotsquackcount;
+package com.ucount;
 
 import android.app.Application;
 
