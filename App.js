@@ -6,6 +6,7 @@ import {
   View,
   Platform,
   ListView,
+  FlatList,
   Keyboard,
   AsyncStorage,
   ActivityIndicator,
@@ -64,41 +65,16 @@ class App extends Component {
           <Button onIncrement={this.handleIncrement} />
         </View>
         <View style={styles.content} onScroll={() => Keyboard.dismiss()}>
-          <ListView
-            style={styles.list}
-            enableEmptySections
-            dataSource={this.state.dataSource}
-            //onScroll={()=>Keyboard.dismiss()} /*whenever someone scrolls the list the keybord dissapears*/
-            renderRow={({ key, ...value }) => {
-              return (
-                <Row
-                  key={key}
-                  onUpdate={text => this.handleUpdateText(key, text)}
-                  onToggleEdit={editing =>
-                    this.handleToggleEditing(key, editing)
-                  }
-                  onRemove={() => this.handleRemoveItem(key)}
-                  onComplete={complete =>
-                    this.handleToggleComplete(key, complete)
-                  }
-                  {...value}
-                />
-              );
-            }}
-            renderSeparator={(sectionId, rowId) => {
-              return <View key={rowId} style={styles.separator} />;
-            }}
-          />
+        <View style={styles.backButtonView}>
+          <TouchableOpacity style={styles.backButton} onPress={this.handleRemoveItem}>
+            {this.backIcon}
+          </TouchableOpacity>
+        </View>
+          
         </View>
         <View style={styles.clearAllButton}>
           <TouchableOpacity onPress={this.handleClearAll}>
             <Text style={styles.clearAllButtonText}>Clear</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.backButtonView}>
-          <TouchableOpacity style={styles.backButton} onPress={this.handleUndo}>
-            {this.backIcon}
           </TouchableOpacity>
         </View>
 
@@ -205,9 +181,10 @@ class App extends Component {
     this.setSource(newItems, newItems);
     // this.setSource(newItems, filterItems(this.state.filter, newItems));
   }
-  handleRemoveItem(key) {
+  handleRemoveItem() {
+    const splicedItem = this.state.items.splice(-1,1);
     const newItems = this.state.items.filter(item => {
-      return item.key !== key;
+      return item.key !== splicedItem.key;
     });
     this.setSource(newItems, newItems);
     var counterNewVal = this.state.counter > 1 ? this.state.counter - 1 : 0;
@@ -253,7 +230,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    // backgroundColor: '#fdfdfd'
+    backgroundColor: '#f10'
   },
   separator: {
     borderWidth: 1,
@@ -296,9 +273,12 @@ const styles = StyleSheet.create({
     color: "#000"
   },
   backButtonView: {
-    position: "absolute",
-    top: 1,
-    left: 1
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+    // position: "absolute",
+    // top: 1,
+    // left: 1
     // borderRadius: 10,
     // flex: 1,
     // bottom: 0,
@@ -308,7 +288,11 @@ const styles = StyleSheet.create({
     // position: "absolute",
     // left: 0,
     // top: 0,
-    borderTopRightRadius: 50
+    borderRadius: 25,
+    backgroundColor: "#FFFF",
+    padding: 5,
+    borderWidth: 2,
+    borderColor: "#333"
   },
   backIcon: {
     flex: 1
