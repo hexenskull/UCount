@@ -35,7 +35,7 @@ class App extends Component {
       dataSource: ds.cloneWithRows([]),
       counter: 0,
       flexValOfButtonView: 1,
-      isUndoButtonActive: false,
+      isUndoButtonActive: false
     };
     this.handleUpdateText = this.handleUpdateText.bind(this);
     this.handleToggleEditing = this.handleToggleEditing.bind(this);
@@ -97,9 +97,7 @@ class App extends Component {
         </View>
 
         <View style={styles.backButtonView}>
-          <TouchableOpacity style={styles.backButton}
-            onPress={this.handleUndo}
-          >
+          <TouchableOpacity style={styles.backButton} onPress={this.handleUndo}>
             {this.backIcon}
           </TouchableOpacity>
         </View>
@@ -252,7 +250,7 @@ const styles = StyleSheet.create({
     })
   },
   content: {
-    flex: 1
+    flex: 1,
   },
   list: {
     // backgroundColor: '#fdfdfd'
@@ -300,20 +298,20 @@ const styles = StyleSheet.create({
   backButtonView: {
     position: "absolute",
     top: 1,
-    left: 1,
+    left: 1
     // borderRadius: 10,
     // flex: 1,
     // bottom: 0,
     // left: 0
   },
-  backButton : {
+  backButton: {
     // position: "absolute",
     // left: 0,
     // top: 0,
-    borderTopRightRadius: 50,
+    borderTopRightRadius: 50
   },
-  backIcon : {
-    flex:1,
+  backIcon: {
+    flex: 1
   }
 });
 

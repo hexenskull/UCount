@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet, View, TouchableOpacity, TextInput, Keyboard } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 class Row extends Component {
     render() {
@@ -14,7 +15,8 @@ class Row extends Component {
         )
         const removeButton = (
             <TouchableOpacity onPress={this.props.onRemove}>
-              <Text style={styles.destroy}>X</Text>
+              {/* <Text style={styles.destroy}>X</Text> */}
+              <Icon size={30} name='close-circle' color="red" />
             </TouchableOpacity>
         )
 
@@ -61,9 +63,11 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
+    flex: 1,
     flexDirection: "row",
-    alignItems:  "flex-start", // start with content at the top
-    justifyContent: "space-between" // spacing between items in a list view
+    alignItems:  "center", // start with content at the top
+    justifyContent: "center", // spacing between items in a list view
+    backgroundColor: "#fda"
   },
   textWrap: {
     flex: 1,
@@ -87,7 +91,7 @@ const styles = StyleSheet.create({
       marginBottom: 2
   },
   idleTextContainer: {
-      flex: 1,
+    //   flex: 1,
   }
 //   done: {
 //       borderRadius: 5,
