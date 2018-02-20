@@ -19,7 +19,12 @@ Navigation.startSingleScreenApp({
   screen: {
     screen: "ucount.MainClickScreen",
     // title: "Login"
-  }
+    
+    },
+    navigatorStyle: {
+      backgroundColor: "red"
+    }, // override the navigator style for the screen, see "Styling the navigator" below (optional)
+    navigatorButtons: {}
 });
 
 // export default () =>

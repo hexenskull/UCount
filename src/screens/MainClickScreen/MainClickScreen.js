@@ -31,6 +31,13 @@ import Icon from "react-native-vector-icons/Entypo";
 
 class MainClickScreen extends React.Component {
   backIcon = <Icon name="back" size={40} color="#900" />;
+
+  static navigatorStyle = {
+    // drawUnderNavBar: true,
+    // navBarTranslucent: true
+    navBarHidden: true
+  };
+
   constructor(props) {
     super(props);
     const ds = new ListView.DataSource({
