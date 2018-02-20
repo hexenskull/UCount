@@ -11,12 +11,24 @@ import {
   ActivityIndicator,
   TouchableOpacity
 } from "react-native";
+
+import ModalDropdown from 'react-native-modal-dropdown';
+
+// const DropDown = require('react-native-dropdown');
+// const {
+//   Select,
+//   Option,
+//   OptionList,
+//   updatePosition
+// } = DropDown;
+
 import AppStateListener from "react-native-appstate-listener";
 import Row from "./row";
 import Button from "./button";
+import SwitchGroup from "./src/components/SwitchGroup/SwitchGroup"
 import Icon from "react-native-vector-icons/Entypo";
 
-class App extends Component {
+class App extends React.Component {
   backIcon = <Icon name="back" size={40} color="#900" />;
   constructor(props) {
     super(props);
@@ -31,7 +43,8 @@ class App extends Component {
       dataSource: ds.cloneWithRows([]),
       counter: 0,
       flexValOfButtonView: 1,
-      isUndoButtonActive: false
+      isUndoButtonActive: false,
+      groupsList: ['option 1', 'option 2'],
     };
 
     this.handleRemoveItem = this.handleRemoveItem.bind(this);
@@ -48,6 +61,11 @@ class App extends Component {
         <AppStateListener onActive={() => Keyboard.dismiss()}>
           {" "}
         </AppStateListener>
+
+        <View style={styles.switchGroupWrapper}>
+        <SwitchGroup groupsList={this.state.groupsList}/>
+        </View>
+
         <View style={styles.totalCount}>
           <Text style={styles.totalCountText}>
             {this.state.items.length} times
@@ -155,6 +173,10 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: { paddingTop: 20 }
     })
+  },
+  switchGroupWrapper: {
+    flex: 0.1,
+    padding: 5,
   },
   content: {
     flex: 1,
